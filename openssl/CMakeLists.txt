@@ -39,6 +39,7 @@ endif()
 
 if(OS_WINDOWS)
 	if(COMPILER_MSVC)
+        set(OPENSSL_MAKE "nmake")
 		if(ARCH_32BIT)
 			set(OPENSSL_CONFIGURE_ARCH "VC-WIN32")
 		elseif(ARCH_64BIT)
@@ -46,6 +47,7 @@ if(OS_WINDOWS)
 		endif()
 	endif()
 elseif(OS_LINUX)
+    set(OPENSSL_MAKE "make -j${CPUS}")
 	if(ARCH_32BIT)
 		if(COMPILER_GCC)
 			set(OPENSSL_CONFIGURE_ARCH "linux-x86")
@@ -85,9 +87,9 @@ ExternalProject_Add(openssl
 		${OPENSSL_CONFIGURE_OPTIONS}
 		${OPENSSL_CONFIGURE_ARCH}
 	BUILD_COMMAND
-		make -j${CPUS}
+		${OPENSSL_MAKE}
 	INSTALL_COMMAND
-		make -j${CPUS} install
+		${OPENSSL_MAKE} install
 	LOG_DOWNLOAD 1
 	LOG_BUILD 1
 	LOG_CONFIGURE 1
@@ -100,7 +102,7 @@ set(OPENSSL_INCLUDES
 )
 
 set(OPENSSL_LIBRARIES
-	"${OPENSSL_INSTALL_DIR}/lib/libssl.a"
-	"${OPENSSL_INSTALL_DIR}/lib/libcrypto.a"
+	"${OPENSSL_INSTALL_DIR}/lib/libssl${CMAKE_STATIC_LIBRARY_SUFFIX}"
+	"${OPENSSL_INSTALL_DIR}/lib/libcrypto${CMAKE_STATIC_LIBRARY_SUFFIX}"
 	PARENT_SCOPE
 )
