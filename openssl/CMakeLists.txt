@@ -47,7 +47,7 @@ if(OS_WINDOWS)
 		endif()
 	endif()
 elseif(OS_LINUX)
-    set(OPENSSL_MAKE "make -j${CPUS}")
+    set(OPENSSL_MAKE make -j${CPUS})
 	if(ARCH_32BIT)
 		if(COMPILER_GCC)
 			set(OPENSSL_CONFIGURE_ARCH "linux-x86")
@@ -106,3 +106,8 @@ set(OPENSSL_LIBRARIES
 	"${OPENSSL_INSTALL_DIR}/lib/libcrypto${CMAKE_STATIC_LIBRARY_SUFFIX}"
 	PARENT_SCOPE
 )
+
+add_library(mycrypto INTERFACE)
+target_include_directories(mycrypto SYSTEM INTERFACE "${OPENSSL_INSTALL_DIR}/include")
+target_link_libraries(mycrypto INTERFACE "${OPENSSL_INSTALL_DIR}/lib/libcrypto${CMAKE_STATIC_LIBRARY_SUFFIX}")
+add_dependencies(mycrypto openssl)
